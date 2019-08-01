@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TENNIS</title>
+    <style>
+      body {
+        background-color: #87ceeb;
+      }
+      #field {
+        position: relative;
+        display: block;
+        margin: auto;
+        box-sizing: border-box;
+        width: 650px;
+        height: 430px;
+        border: 5px solid silver;
+        background-color: black;
+      }
+      #startButton {
+        display: block;
+        width: 200px;
+        height: 60px;
+        margin: auto;
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: 500;
+        background: gold;
+        box-shadow: 0 -2px black inset;
+        border-radius: 50px;
+      }
+      #ScoreField {
+        display: flex;
+        width: 80%;
+        margin: auto;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 3em;
+        font-weight: 700;
+        color: #ffffff;
+        text-shadow: 0 0 2px #ffffff, 0 0 8px #ffffff, 0 0 10px #ffffff,
+          0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00,
+          0 0 80px #00ff00;
+      }
+      #title {
+        display: block;
+        margin: auto;
+        margin-top: 20px;
+        font-size: 55px;
+        font-family: Arial;
+        font-weight: 700;
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 0 0 2px #ffffff, 0 0 8px #ffffff, 0 0 10px #ffffff,
+          0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00,
+          0 0 80px #00ff00;
+      }
+      .racket {
+        position: absolute;
+        background-color: #ffd700;
+        border-radius: 10px;
+      }
+      @keyframes bounce {
+        from {
+          transform: scale(0);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      @keyframes fade {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: none;
+          transform: scale(0);
+        }
+      }
+      #finish {
+        width: 300px;
+        top: 30%;
+        left: 50%;
+        margin-left: -150px;
+        margin-top: -50px;
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 0 0 2px #ffffff, 0 0 8px #ffffff, 0 0 10px #ffffff,
+          0 0 20px gold, 0 0 30px gold, 0 0 40px gold, 0 0 50px gold,
+          0 0 80px gold;
+        font-size: 5em;
+        transition: opacity 0.4s linear;
+        transform-origin: 50% 50%;
+        animation: bounce 1.5s ease-in-out, fade 1s linear 3s;
+      }
+      #goal {
+        width: 100px;
+        top: 20%;
+        left: 50%;
+        margin-left: -55px;
+        margin-top: -50px;
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 0 0 2px #ffffff, 0 0 8px #ffffff, 0 0 10px #ffffff,
+          0 0 20px gold, 0 0 30px gold, 0 0 40px gold, 0 0 50px gold,
+          0 0 80px gold;
+        font-size: 2em;
+        transition: opacity 0.4s linear;
+        transform-origin: 50% 50%;
+        animation: bounce 1.5s ease-in-out;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      const title = document.createElement("div");
+      title.id = "title";
+      title.innerHTML = `LET'S PLAY IN TENNIS`;
+      document.body.appendChild(title);
+      const startButton = document.createElement("button"); //КНОПКА "PLAY"
+      startButton.id = "startButton";
+      let startText = "Begin the Battle";
+      let resetText = "Stop Battle";
+      startButton.innerHTML = startText;
+      document.body.appendChild(startButton);
+      const ScoreField = document.createElement("div"); //FLEX КОНТЕЙНЕР ДЛЯ ПОДСЧЕТА ОЧКОВ
+      ScoreField.id = "ScoreField";
+      document.body.appendChild(ScoreField);
+      const LeftPlayerPoints = document.createElement("div"); //ОЧКИ ЛЕВОГО ИГРОКА
+      LeftPlayerPoints.innerHTML = "0";
+      const RightPlayerPoints = document.createElement("div"); //ОЧКИ ПРАВОГО ИГРОКА
+      RightPlayerPoints.innerHTML = "0";
+      ScoreField.appendChild(LeftPlayerPoints);
+      ScoreField.appendChild(RightPlayerPoints);
+      const Field = document.createElement("div");
+      Field.id = "field";
+      Field.classList.add = "field";
+      document.body.appendChild(Field);
+      let field = document.getElementById("field");
+      let requestId;
+      let canStart = true;
+      let scoresToWin = 3;
+      let leftPlayer,
+        leftRacket,
+        rightPlayer,
+        rightRacket,
+        leftPlayerYTop,
+        leftPlayerYBottom,
+        rightPlayerYTop,
+        rightPlayerYBottom,
+        ball;
+      let paramOfField = {
+        fieldHeight: Field.offsetHeight,
+        fieldWidth: Field.offsetWidth,
+        fieldCenterX: Field.offsetWidth / 2,
+        fieldCenterY: Field.offsetHeight / 2
+      };
+      let keyPressed = []; //массив зажатых клавиш, для одновременной работы нескольких клавиш
+      document.body.addEventListener("keydown", function(e) {
+        keyPressed[e.keyCode] = true;
+      });
+      document.body.addEventListener("keyup", function(e) {
+        keyPressed[e.keyCode] = false;
+      });
+
+      createElements();
+      ball.update();
+
+      function createElements() {
+        leftPlayer = new Racket("left", 16, 17, "leftRacket"); // 16 - shift, 17 - ctrl
+        rightPlayer = new Racket("right", 38, 40, "rightRacket"); // 38 - up, 40 - down
+        ball = new CreateBall();
+        leftRacket = document.getElementById("leftRacket");
+        rightRacket = document.getElementById("rightRacket");
+        ballH = document.getElementById("ball");
+      }
+
+      function deleteElements() {
+        Field.removeChild(leftRacket);
+        Field.removeChild(rightRacket);
+        Field.removeChild(ballH);
+      }
+
+      function startGame() {
+        if (canStart) {
+          LeftPlayerPoints.scoreCounter = counter();
+          RightPlayerPoints.scoreCounter = counter();
+          start();
+          startButton.innerHTML = resetText;
+          canStart = false;
+        } else {
+          cancelAnimationFrame(requestId);
+          deleteElements();
+          createElements();
+          startButton.innerHTML = startText;
+          LeftPlayerPoints.innerHTML = "0";
+          RightPlayerPoints.innerHTML = "0";
+          canStart = true;
+        }
+      }
+
+      function start() {
+        requestId = requestAnimationFrame(start);
+        tick();
+      }
+
+      function upgrateRacketsPosition() {
+        leftPlayerYTop = leftPlayer.racketPosition;
+        leftPlayerYBottom = leftPlayerYTop + leftPlayer.height;
+        rightPlayerYTop = rightPlayer.racketPosition;
+        rightPlayerYBottom = rightPlayerYTop + rightPlayer.height;
+      }
+
+      startButton.addEventListener("click", function(e) {
+        e.preventDefault();
+        startGame();
+      });
+
+      function moveRackets() {
+        if (keyPressed[leftPlayer.keyCodeForMoveTop]) {
+          leftPlayer.moveTop();
+          upgrateRacketsPosition();
+        }
+        if (keyPressed[leftPlayer.keyCodeforMoveDown]) {
+          leftPlayer.moveDown();
+          upgrateRacketsPosition();
+        }
+        if (keyPressed[rightPlayer.keyCodeForMoveTop]) {
+          rightPlayer.moveTop();
+          upgrateRacketsPosition();
+        }
+        if (keyPressed[rightPlayer.keyCodeforMoveDown]) {
+          rightPlayer.moveDown();
+          upgrateRacketsPosition();
+        }
+        requestAnimationFrame(moveRackets);
+      }
+      moveRackets();
+
+      function Racket(pos, top, down, id) {
+        this.height = 120;
+        this.width = 10;
+        this.speed = 7.5;
+        this.racketPosition = paramOfField.fieldCenterY - this.height / 2;
+        this.positionOfPlayer = pos;
+        this.keyCodeForMoveTop = top;
+        this.keyCodeforMoveDown = down;
+        let racket = document.createElement("div");
+        racket.id = id;
+        racket.classList.add("racket");
+        racket.style.width = this.width + "px";
+        racket.style.height = this.height + "px";
+        racket.style.transform = `translateY(${this.racketPosition}px)`;
+        if (pos == "left") racket.style.left = "5px";
+        if (pos == "right") racket.style.right = "5px";
+        Field.appendChild(racket);
+        this.moveTop = function() {
+          if (this.racketPosition > 8.5) {
+            this.racketPosition -= this.speed;
+            racket.style.transform = `translateY(${this.racketPosition}px)`;
+          }
+        };
+        this.moveDown = function() {
+          if (
+            this.racketPosition <
+            paramOfField.fieldHeight - this.height - 15
+          ) {
+            this.racketPosition += this.speed;
+            racket.style.transform = `translateY(${this.racketPosition}px)`;
+          }
+        };
+      }
+
+      function CreateBall() {
+        this.width = 30;
+        this.height = 30;
+        this.posX = paramOfField.fieldCenterX - this.width;
+        this.posY = paramOfField.fieldCenterY - this.height;
+        this.speedX = 4;
+        this.speedY = 3;
+        let Ball = document.createElement("div");
+        Ball.id = "ball";
+        Ball.style.borderRadius = "50%";
+        Ball.style.background = "#FF0000";
+        Ball.style.position = "relative";
+        Ball.style.width = this.width + "px";
+        Ball.style.height = this.height + "px";
+        Ball.style.top = this.posY + "px";
+        Ball.style.left = this.posX + "px";
+        Field.appendChild(Ball);
+        this.update = function() {
+          Ball.style.left = this.posX + "px";
+          Ball.style.top = this.posY + "px";
+        };
+      }
+
+      function counter() {
+        let number = 0;
+        return function() {
+          return ++number;
+        };
+      }
+
+      function finishGame() {
+        if (
+          RightPlayerPoints.innerHTML >= scoresToWin ||
+          LeftPlayerPoints.innerHTML >= scoresToWin
+        ) {
+        
+          cancelAnimationFrame(requestId);
+          let finish = document.createElement("div");
+          finish.id = "finish";
+          finish.style.position = "absolute";
+          if (LeftPlayerPoints.innerHTML >= scoresToWin)
+            finish.innerHTML = "Left Player Wins";
+          if (RightPlayerPoints.innerHTML >= scoresToWin)
+            finish.innerHTML = "Right Player Wins";
+          Field.appendChild(finish);
+          let fin = document.getElementById("finish");
+          setTimeout(function() {
+            Field.removeChild(fin);
+          }, 4000);
+          setTimeout(startGame, 4400);
+        }
+      }
+      function goal() {
+        let niceGoal = document.createElement("div");
+        niceGoal.id = "goal";
+        niceGoal.style.position = "absolute";
+        niceGoal.innerHTML = "GOAL!!!";
+        Field.appendChild(niceGoal);
+        let myGoal = document.getElementById("goal");
+        setTimeout(function() {
+          Field.removeChild(myGoal);
+        }, 1500);
+      }
+      
+      function randomInteger(min, max) {
+        var rand = min - 0.5 + Math.random() * (max - min + 1);
+        rand = Math.round(rand);
+        return rand;
+      }
+
+      function tick() {
+        finishGame();
+        ball.posX += ball.speedX;
+        ball.posY += ball.speedY;
+        // отбился ли мяч от правой ракетки
+        if (
+          ball.posY + 25 > rightPlayerYTop &&
+          ball.posY < rightPlayerYBottom - 25 &&
+          ball.posX + ball.width > paramOfField.fieldWidth - 25
+        ) {
+          ball.posX = paramOfField.fieldWidth - 25 - ball.width;
+          ball.speedX = -ball.speedX;
+        }
+        // отбился ли мяч от левой ракетки
+        if (
+          ball.posY + 25 > leftPlayerYTop &&
+          ball.posY < leftPlayerYBottom - 25 &&
+          ball.posX < 15
+        ) {
+          ball.posX = 15;
+          ball.speedX = -ball.speedX;
+        }
+        // вылетел ли мяч правее стены?
+        if (ball.posX + ball.width > paramOfField.fieldWidth - 10) {
+          ball.posX = paramOfField.fieldWidth - ball.width - 10;
+          ball.speedX = -ball.speedX;
+          LeftPlayerPoints.innerHTML = LeftPlayerPoints.scoreCounter();
+          goal();
+        }
+        // вылетел ли мяч левее стены?
+        if (ball.posX < 0) {
+          ball.posX = 0;
+          ball.speedX = -ball.speedX;
+          RightPlayerPoints.innerHTML = RightPlayerPoints.scoreCounter();
+          goal();
+        }
+        // вылетел ли мяч ниже пола?
+        if (ball.posY + ball.height > paramOfField.fieldHeight - 10) {
+          ball.posY = paramOfField.fieldHeight - ball.height - 10;
+          ball.speedY = -ball.speedY;
+        }
+        // вылетел ли мяч выше потолка?
+        if (ball.posY < 0) {
+          ball.posY = 0;
+          ball.speedY = -ball.speedY;
+        }
+        ball.update();
+      }
+    </script>
+  </body>
+</html>

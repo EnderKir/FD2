@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Тег SCRIPT</title>
+  <script src="HashStorage.js"></script>
+</head>
+
+<body>
+  <input id="elem1" type="button" value="Ввод рецепта" class="button"  />
+  <input id=" elem2" type="button" value="Рецепт напитка" class="button" onclick = "getRecipe()" />
+  <input id="elem3" type="button" value="Удаление напитка" class="button" onclick = "deleteRecipe()" />
+  <input id="elem4" type="button" value="Перечень всех коктелей" class="button" onclick = "allCoctails()"/>
+  <style>
+    .button {
+      border-radius: 100px;
+      margin-left: 20px;
+      margin-top: 50px;
+      height: 240px;
+      width: 300px;
+      font-size: 25px;
+      background-color: aqua;
+      box-shadow: 0 -10px rgb(235, 15, 15) inset
+    }
+  </style>
+  <script>
+    var coctailsStorage = new HashStorage();
+    function addRecipe() {
+      while (1) {
+        var name = prompt('Введите название коктейля');
+        if (name != null && name != '' && name.length < 15 && isNaN(name) && name.length > 1) {
+            break;
+        }
+        alert ('Введите реальное название');
+      }
+      var isAlcohol = confirm("Алкогольный");
+      if (isAlcohol) {
+        var alcohol = '(алкольный) : да' + '\n';
+      } else {
+          alcohol = '(алкольный) : нет' + '\n';
+        }
+      alert('Поочерёдно вводите ингридиенты, когда закончите, нажмите "Отмена" ');
+      var ingredients = 'Необходимые ингридиенты: ';
+      while (1) {
+        var amount = prompt('Введите ингридиент и его количество');
+        if (amount == null) {
+          break;
+        }
+        ingredients += '\n' + amount;
+      }
+      var recipe = '\n' + 'Рецепт приготовления: ';
+      while (1) {
+        var howToCook = prompt('Введите рецепт приготовления');
+        if (howToCook != null) {
+          recipe += '\n' + howToCook;
+          break;
+        }
+      }
+      var value = alcohol + ingredients + recipe;
+      coctailsStorage.addValue(name,value);
+    }
+    function getRecipe() {
+      while (1) {
+        var drink = prompt('Какой напиток интересует');
+        if (drink != null && drink != '' && isNaN(drink) && drink.length > 1) {
+          break;
+        }
+        alert('Введите реальный напиток');
+      }
+      alert(coctailsStorage.getValue(drink));
+    }
+    function deleteRecipe() {
+      while (1) {
+        var drink = prompt('Какой напиток интересует');
+        if (drink != null && drink != '' && isNaN(drink) && drink.length > 1) {
+          break;
+        }
+        alert('Введите реальный напиток');
+      }
+      alert(coctailsStorage.deleteValue(drink));
+    }
+    function allCoctails() {
+      alert('Перечень всех напитков  ' + coctailsStorage.getKeys().join(', '));
+    }
+    let firstButton = document.getElementById('elem1');
+    firstButton.addEventListener('click', addRecipe);
+    let secondButton = document.getElementById('elem2');
+    secondButton.addEventListener('click', getRecipe);
+    let thirdButton = document.getElementById('elem3');
+    thirdButton.addEventListener('click', deleteRecipe);
+    let fourthButton = document.getElementById('elem4');
+    fourthButton.addEventListener('click', allCoctails);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Тег SCRIPT</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+            text-align: center;
+            border-spacing: 5px;
+            background: #E1E3E0;
+            border-radius: 20px;
+        }
+
+        td,
+        th {
+            border: 2px solid #F56433;
+            padding: 10px;
+            text-align: center;
+            color: #8D8173;
+        }
+
+        th {
+            font-weight: bold;
+            background-color: #E6E6E6;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        var numbersOfMonth = {
+            'Январь' : 0,
+            'Февраль' : 1,
+            'Март' : 2,
+            'Апрель' : 3,
+            'Май' : 4,
+            'Июнь' : 5,
+            'Июль' : 6,
+            'Август' : 7,
+            'Сентябрь' : 8,
+            'Октябрь' : 9,
+            'Ноябрь' : 10,
+            'Декабрь' : 11
+        };
+        var div = document.createElement('div');
+        div.className = 'calendar';
+        document.body.appendChild(div);
+        while (1) {
+            var month = prompt('Введите месяц');
+            if (month != null && month != '' && numbersOfMonth.hasOwnProperty(month) && month.length <= 10 && isNaN(month) && month.length >= 3) { 
+                mon = numbersOfMonth[month];
+                break; 
+            }
+            alert('Введите реальный месяц');
+        }
+        
+        
+        while (1) {
+            var year = prompt('Введите год');
+            if (year < 2020 && year > 1970 && !isNaN(year) && year != null) {
+                break;
+            }
+            alert('Введите реальный год (больше 1970) ');
+        }
+        var date = new Date(Number(year), mon - 1);
+        
+
+        var table = '<table>' + '<tr><th colspan="7">' + month + '  ' + year + ' года' +'</th></tr>' 
+        + '<tr><th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th></tr><tr>';
+        console.log(table);
+        for (var i = 0; i < getDay(date); i++) {
+            table += '<td></td>'
+        }
+
+        while (date.getMonth() == mon - 1) {
+            table += '<td>' + date.getDate() + '</td>';
+            if (getDay(date) % 7 == 6) {
+                table += '<tr></tr>';
+            }
+            date.setDate(date.getDate() + 1);
+        }
+
+        if (getDay(date) != 0) {
+            for (var i = getDay(date); i < 7; i++) {
+                table += '<td></td>';
+            }
+        }
+
+        function getDay(date) {
+            var day = date.getDay();
+            if (day == 0) day = 7;
+            return day - 1;
+        }
+
+        table += '</tr></table>';
+        div.innerHTML = table;
+    </script>
+
+</body>
+
+</html>

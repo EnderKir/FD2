@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Clock</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div>
+        <canvas id="clock" width="700" height="700">Извините, ваш браузер не поддерживает тег canvas</canvas>
+    </div>
+    <script>
+        function createClock() {
+
+            var canvas = document.getElementById("clock");
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+            ctx.beginPath();
+            ctx.arc(250, 250, 250, 0, 2 * Math.PI);
+            ctx.fillStyle = '#C0C0C0'
+            ctx.fill();
+            ctx.closePath();
+
+            const numbers = 12;
+            let delta = Math.PI * 2 / numbers;
+            let angle = 0;
+            let numeral = 9;
+            let radius = -200;
+            let clockCenterX = 250;
+            let clockCenterY = 250;
+
+            for (var i = 1; i <= numbers; i++) {
+                let x = clockCenterX + radius * Math.cos(angle);
+                let y = clockCenterY + radius * Math.sin(angle);
+                ctx.beginPath();
+                ctx.arc(x, y, 35, 0, 2 * Math.PI);
+                ctx.fillStyle = '#00FFFF';
+                ctx.fill();
+                ctx.closePath();
+                if (numeral > 9) {
+                    x -= 17;
+                    y += 10;
+                } else {
+                    x -= 10;
+                    y += 10;
+                }
+                ctx.fillStyle = 'black';
+                ctx.font = 'italic 30px sans-serif';
+                ctx.fillText(numeral, x, y);
+                angle += delta;
+                numeral++;
+                if (numeral > 12) {
+                    numeral = 1;
+                }
+            }
+
+            // Получаем дату и находим углы поворота в грудсах
+            let min = new Date().getMinutes();
+            let sec = new Date().getSeconds();
+            let hour = new Date().getHours();
+            let secAngle = 6 * sec;
+            let minAngle = 6 * (min + 1 / 60 * sec);
+            let hourAngle = 30 * (hour + 1 / 60 * min);
+            console.log(sec);
+
+            //Рисуем и двигаем секундную стрелку
+            ctx.beginPath();
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.translate(clockCenterX, clockCenterY);
+            ctx.rotate(secAngle * Math.PI / 180 + Math.PI);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, 200);
+            ctx.strokeStyle = 'red';
+            ctx.stroke();
+            ctx.resetTransform();
+            ctx.closePath();
+
+            //Рисуем и двигаем минутную стрелку
+            ctx.beginPath();
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.translate(clockCenterX, clockCenterY);
+            ctx.rotate(minAngle * Math.PI / 180 + Math.PI);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, 180);
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+            ctx.resetTransform();
+            ctx.closePath();
+
+            //Рисуем и двигаем часовую стрелку
+            ctx.beginPath();
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.translate(clockCenterX, clockCenterY);
+            ctx.rotate(hourAngle * Math.PI / 180 + Math.PI);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, 120);
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+            ctx.resetTransform();
+            ctx.closePath();
+
+            // Цифровые часики
+            let date = new Date(),
+                hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(),
+                minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(),
+                seconds = (date.getSeconds() < 10) ? '0' + date.getSeconds() : date.getSeconds();
+            let currenTime = hours + ':' + minutes + ':' + seconds;
+            ctx.fillStyle = 'red';
+            ctx.font = 'italic 30px sans-serif';
+            ctx.fillText(currenTime, 190, 180);
+
+
+        }
+        createClock();
+        var movement = setTimeout(function run() {
+            createClock();
+            setTimeout(run, 1000);
+        }, 1000);
+    </script>
+</body>
+
+</html>

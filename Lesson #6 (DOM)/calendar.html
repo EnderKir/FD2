@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Тег SCRIPT</title>
+    <style>
+        .caption {
+            border: 2px solid red;
+            width: 303px;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            font-weight: bold;
+
+        }
+
+        table {
+            border-collapse: collapse;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+            text-align: center;
+            border-spacing: 5px;
+            background: #E1E3E0;
+            border-radius: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        td,
+        th {
+            border: 2px solid #F56433;
+            padding: 10px;
+            text-align: center;
+            color: #8D8173;
+        }
+
+        th {
+            font-weight: bold;
+            background-color: #E6E6E6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='caption'>
+        <a href='#' id='firstButton'>
+            << </a> <a href='#' id='secondButton'>
+                < </a> <span id='izvrashenie'></span>
+                    <a href='#' id=thirdButton> > </a>
+                    <a href='#' id=fourthButton> >> </a>
+    </div>
+    <div id='calendar' class='calendar'></div>
+
+
+    <script>
+        const calendar = document.getElementById('calendar');
+        const text = document.getElementById('izvrashenie');
+        const firstButton = document.getElementById('firstButton');
+        const secondButton = document.getElementById('secondButton');
+        const thirdButton = document.getElementById('thirdButton');
+        const fourthButton = document.getElementById('fourthButton');
+        var numbersOfMonth = {
+            'Январь': 0,
+            'Февраль': 1,
+            'Март': 2,
+            'Апрель': 3,
+            'Май': 4,
+            'Июнь': 5,
+            'Июль': 6,
+            'Август': 7,
+            'Сентябрь': 8,
+            'Октябрь': 9,
+            'Ноябрь': 10,
+            'Декабрь': 11
+        };
+        while (1) {
+            var month = prompt('Введите месяц');
+            if (month != null && month != '' && numbersOfMonth.hasOwnProperty(month) && month.length <= 10 && isNaN(
+                    month) && month.length >= 3) {
+                var mon = numbersOfMonth[month];
+                break;
+            }
+            alert('Введите реальный месяц');
+        }
+
+
+        while (1) {
+            var year = prompt('Введите год');
+            if (year < 2020 && year > 1970 && !isNaN(year) && year != null) {
+                break;
+            }
+            alert('Введите реальный год (больше 1970) ');
+        }
+
+        function calendarBuild() {
+            var string = ' ' + month + ' ' + year + ' года ';
+            text.innerHTML = string;
+            var date = new Date(Number(year), mon);
+
+            var table =
+                '<table></th></tr><tr><th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th></tr><tr>';
+            for (var i = 0; i < getDay(date); i++) {
+                table += '<td></td>'
+            }
+            while (date.getMonth() == mon) {
+                table += '<td>' + date.getDate() + '</td>';
+                if (getDay(date) % 7 == 6) {
+                    table += '<tr></tr>';
+                }
+                date.setDate(date.getDate() + 1);
+            }
+
+            if (getDay(date) != 0) {
+                for (var i = getDay(date); i < 7; i++) {
+                    table += '<td></td>';
+                }
+            }
+
+            function getDay(date) {
+                var day = date.getDay();
+                if (day == 0) day = 7;
+                return day - 1;
+            }
+
+            table += '</tr></table>';
+            calendar.innerHTML = table;
+        }
+        calendarBuild(year, month);
+        Object.prototype.getKeyByValue = function (value) {
+            for (var prop in this) {
+                if (this.hasOwnProperty(prop)) {
+                    if (this[prop] === value)
+                        return prop;
+                }
+            }
+        }
+
+        function setPreviousYear() {
+            year--;
+            calendarBuild(year);
+        }
+
+        function setNextYear() {
+            year++;
+            calendarBuild(year);
+        }
+
+        function setPreviousMonth() {
+            mon--;
+            if (mon < 0) {
+                mon = 11;
+                year--;
+            }
+            month = numbersOfMonth.getKeyByValue(mon);
+            calendarBuild(month, year, mon);
+        }
+        function setNextMonth() {
+            mon++;
+            if (mon > 11) {
+                mon = 0;
+                year++;
+            }
+            month = numbersOfMonth.getKeyByValue(mon);
+            calendarBuild(month, year, mon);
+        }
+
+        firstButton.onclick = setPreviousYear;
+        fourthButton.onclick = setNextYear;
+        secondButton.onclick = setPreviousMonth;
+        thirdButton.onclick = setNextMonth;
+    </script>
+
+</body>
+
+</html>

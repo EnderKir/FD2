@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Clock_MVC</title>
+    <style type="text/css" media="screen">
+      #wrapper {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        padding-right: 140px;
+        padding-left: 140px;
+      }
+      #wrapper > div {
+        margin-right: 20px;
+      }
+      #wrapper div {
+        text-align: center;
+      }
+      .clock-margin {
+        margin: 40px auto;
+      }
+      .clock {
+        margin: 40px auto;
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+        background-color: #c0c0c0;
+        fill: #c0c0c0;
+        position: relative;
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 10px;
+        font-family: Arial;
+        font-weight: 700;
+        color: #d41a1a;
+        z-index: 100;
+        transition: all 3s linear;
+      }
+      .numbers {
+        width: 23px;
+        height: 23px;
+        background-color: #00ffff;
+        fill: #00ffff;
+        position: absolute;
+        border-radius: 50%;
+        text-align: center;
+        box-sizing: border-box;
+        padding: 5px;
+        padding-top: 7px;
+        font-family: Arial;
+        font-weight: 700;
+        color: black;
+        z-index: 0;
+      }
+      .secArrow,
+      .minArrow,
+      .hourArrow {
+        position: absolute;
+        background-color: #000;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        border-radius: 50%;
+      }
+      .secArrow {
+        width: 2px;
+        height: 90px;
+        top: calc(50% - 20px);
+        left: calc(50% - 1px);
+        transform-origin: 50% 20px;
+      }
+      .minArrow {
+        width: 4px;
+        height: 70px;
+        top: calc(50% - 20px);
+        left: calc(50% - 2px);
+        transform-origin: 50% 20px;
+      }
+      .hourArrow {
+        width: 4px;
+        height: 60px;
+        top: calc(50% - 20px);
+        left: calc(50% - 2px);
+        transform-origin: 50% 20px;
+      }
+      .centerCircle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        top: calc(50% - 5px);
+        left: calc(50% - 5px);
+        background: #d41a1a;
+        z-index: 100;
+      }
+      text {
+        fill: #fff;
+        font-weight: 700;
+        font-size: 10px;
+        font-family: Arial;
+      }
+      .arrows rect {
+        transform-origin: 50% 50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <div id="clock1"></div>
+      <div id="clock2"></div>
+      <div id="clock3"></div>
+      <div id="clock4"></div>
+      <div id="clock5"></div>
+      <div id="clock6"></div>
+    </div>
+    <script src="DOM_VIEW.js"></script>
+    <script src="SVG_VIEW.js"></script>
+    <script src="CANVAS_VIEW.js"></script>
+    <script>
+      //MODEL
+      function Clock(gtm) {
+        this.go = true;
+
+        let viewModel = null;
+        let id = null;
+        this.start = function(view, container, name, gtm) {
+          viewModel = view;
+          viewModel.start(this, container, name, gtm);
+        };
+        this.getTime = function() {
+          let date = new Date();
+          let year = date.getFullYear();
+          let month = date.getMonth();
+          let day = date.getDate();
+          let hours = date.getUTCHours() + gtm;
+          let mitutes = date.getMinutes();
+          let seconds = date.getSeconds();
+          let time = new Date(year, month, day, hours, mitutes, seconds);
+          return time;
+        };
+        this.secRotation = function() {
+          let sec = this.getTime().getSeconds();
+          let angle = sec * 6 - 180;
+          if (viewModel.updateSecArrow) viewModel.updateSecArrow(angle);
+        };
+        this.minRotation = function() {
+          let min = this.getTime().getMinutes();
+          let sec = this.getTime().getSeconds();
+          let angle = 6 * (min + (1 / 60) * sec) - 180;
+          if (viewModel.updateMinArrow) viewModel.updateMinArrow(angle);
+        };
+        this.hourRotation = function() {
+          let hour = this.getTime().getHours();
+          let min = this.getTime().getMinutes();
+          let sec = this.getTime().getSeconds();
+          let angle = 30 * (hour + (1 / 60) * min) - 180;
+          if (viewModel.updateHourArrow) viewModel.updateHourArrow(angle);
+        };
+        // prettier-ignore
+        this.viewUpdate = function() {
+          if (this.go == true) {
+            id = setInterval(function() {
+                this.secRotation();
+                this.minRotation();
+                this.hourRotation();
+                if (viewModel.init) viewModel.init();
+              }.bind(this), 100);
+          } else if (this.go == false) {
+            clearInterval(id);
+          }
+        };
+        this.changeState = function(item, state) {
+          viewModel.changeState(item, state);
+        };
+      }
+      //CONTROLLER
+      function ClockController() {
+        let myModel = null;
+        let myField = null;
+        let run = null;
+        let stop = null;
+        this.start = function(model, field) {
+          myModel = model;
+          myField = field;
+          run = myField.querySelector(".run");
+          stop = myField.querySelector(".stop");
+          run.addEventListener("click", function(e) {
+            e.preventDefault();
+            myModel.go = true;
+            myModel.changeState(run, true);
+            myModel.changeState(stop, false);
+            myModel.viewUpdate();
+          });
+          stop.addEventListener("click", function(e) {
+            e.preventDefault();
+            myModel.go = false;
+            myModel.changeState(run, false);
+            myModel.changeState(stop, true);
+            myModel.viewUpdate();
+          });
+        };
+        this.init = function(model, view, field, city, gtm) {
+          model.start(view, field, city, gtm);
+          model.viewUpdate();
+          this.start(model, field);
+        };
+      }
+      // DOM - 1
+      let clock1 = new Clock(3);
+      let view1 = new ClockViewDOM();
+      let controller1 = new ClockController();
+      let containerElem1 = document.getElementById("clock1");
+      controller1.init(clock1, view1, containerElem1, "Minsk", +3);
+
+      // DOM - 2
+      let clock2 = new Clock(-4);
+      let view2 = new ClockViewDOM();
+      let controller2 = new ClockController();
+      let containerElem2 = document.getElementById("clock2");
+      controller2.init(clock2, view2, containerElem2, "New-York", -4);
+      // SVG - 1
+      let clock3 = new Clock(10);
+      let view3 = new ClockViewSVG();
+      let controller3 = new ClockController();
+      let containerElem3 = document.getElementById("clock3");
+      controller3.init(clock3, view3, containerElem3, "Sidney", 10);
+      // SVG - 2
+      let clock4 = new Clock(-3);
+      let view4 = new ClockViewSVG();
+      let controller4 = new ClockController();
+      let containerElem4 = document.getElementById("clock4");
+      controller4.init(clock4, view4, containerElem4, "Argentina", -3);
+      // CANVAS - 1
+      let clock5 = new Clock(1);
+      let view5 = new ClockViewCanvas();
+      let controller5 = new ClockController();
+      let containerElem5 = document.getElementById("clock5");
+      controller5.init(clock5, view5, containerElem5, "London", 1);
+      // CANVAS - 2
+      let clock6 = new Clock(9);
+      let view6 = new ClockViewCanvas();
+      let controller6 = new ClockController();
+      let containerElem6 = document.getElementById("clock6");
+      controller6.init(clock6, view6, containerElem6, "Tokio", 9);
+    </script>
+  </body>
+</html>

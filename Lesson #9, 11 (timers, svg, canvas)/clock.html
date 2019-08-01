@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Clock</title>
+    <style>
+        .clock {
+            width: 500px;
+            height: 500px;
+            border-radius: 250px;
+            background-color:#C0C0C0;
+            position: relative;
+        }
+
+        .numbers {
+            width: 70px;
+            height: 70px;
+            border-radius: 70px;
+            background-color: #00FFFF;
+            position: absolute;
+            text-align: center;
+            font-size: 35px;
+            font-family: Snell Roundhand;
+            line-height: 70px;
+        }
+
+        .secArrow {
+            position: absolute;
+            width: 5px;
+            height: 220px;
+            background-color: red;
+            transform-origin: 50% 10px;
+            top: 250px;
+            left: 250px;
+            border-radius: 5px;
+        }
+
+        .minArrow {
+            position: absolute;
+            width: 10px;
+            height: 200px;
+            background-color: black;
+            transform-origin: 50% 10px;
+            top: 250px;
+            left: 250px;
+            border-radius: 10px;
+        }
+
+        .hourArrow {
+            position: absolute;
+            width: 20px;
+            height: 140px;
+            background-color: black;
+            transform-origin: 50% 10px;
+            top: 250px;
+            left: 250px;
+            border-radius: 20px;
+        }
+        .currentTime {
+            position: absolute;
+            font: italic 30px sans-serif;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        function createClock() {
+            let clock = document.createElement('div');
+            clock.classList.add('clock');
+            let body = document.body;
+            body.appendChild(clock);
+
+            const numbers = 12;
+            let delta = Math.PI * 2 / numbers;
+            let angle = 0;
+            let numeral = 9;
+            let radius = -200;
+            let clockCenterX = clock.offsetWidth / 2;
+            let clockCenterY = clock.offsetHeight / 2;
+
+            for (var i = 1; i <= numbers; i++) {
+                let currentNumber = document.createElement('div');
+                currentNumber.classList.add('numbers');
+                currentNumber.innerHTML = numeral;
+                clock.appendChild(currentNumber);
+                let currentNumberCenterX = currentNumber.offsetWidth / 2;
+                let currentNumberCenterY = currentNumber.offsetHeight / 2;
+                currentNumber.style.left = clockCenterX - currentNumberCenterX + radius * Math.cos(angle) + 'px';
+                currentNumber.style.top = clockCenterY - currentNumberCenterY + radius * Math.sin(angle) + 'px';
+                angle += delta;
+                numeral++;
+                if (numeral > 12) {
+                    numeral = 1;
+                }
+            }
+
+            var secArrow = document.createElement('div');
+            secArrow.classList.add('secArrow');
+            clock.appendChild(secArrow);
+
+            var minArrow = document.createElement('div');
+            minArrow.classList.add('minArrow');
+            clock.appendChild(minArrow);
+
+            var hourArrow = document.createElement('div');
+            hourArrow.classList.add('hourArrow');
+            clock.appendChild(hourArrow);
+
+            function moveArrows() {
+                let min = new Date().getMinutes();
+                let sec = new Date().getSeconds();
+                let hour = new Date().getHours();
+                let secAngle = 6 * sec;
+                secArrow.style.transform = `rotate(${secAngle + 180}deg)`;
+                let minAngle = 6 * (min + 1 / 60 * sec);
+                minArrow.style.transform = `rotate(${minAngle + 180}deg)`;
+                let hourAngle = 30 * (hour + 1 / 60 * min);
+                hourArrow.style.transform = `rotate(${hourAngle + 180}deg)`;
+
+            }
+           
+            let currentTime = document.createElement('div');
+            clock.appendChild(currentTime);
+            currentTime.id = 'currentTime';
+            currentTime.classList.add('currentTime')
+            currentTime.style.left = 190 + 'px';
+            currentTime.style.top = 150 + 'px';
+
+            function time() {
+                let date = new Date(),
+                    hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(),
+                    minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(),
+                    seconds = (date.getSeconds() < 10) ? '0' + date.getSeconds() : date.getSeconds();
+                document.getElementById('currentTime').innerHTML = hours + ':' + minutes + ':' + seconds;
+            }
+            
+            moveArrows();
+            time();
+            var movementNumber = setTimeout(function run() {
+                time();
+                moveArrows();
+                setTimeout(run, 1000);
+            }, 1000);
+
+        }
+        createClock();
+    </script>
+</body>
+
+</html>

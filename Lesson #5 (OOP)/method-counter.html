@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Тег SCRIPT</title>
+</head>
+
+<body>
+<script>
+    function getCounter(num) {
+        this.result = num || 0;
+        this.log = function() {
+            console.log(this.result);
+            return this;
+        }
+        this.count = function(number) {
+            this.result += number;
+            return this;
+        }
+        this.reset = function() {
+            this.result = 0;
+            return this;
+        }
+    }
+    var counter = new getCounter(5);
+    counter.log();
+    counter.count(4);
+    counter.log();
+    counter.count(3);
+    counter.log();
+    counter.reset();
+    counter.log();
+    counter.count(8);
+    counter.log();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Тег SCRIPT</title>
+    <script>
+        function pow(a) {
+            return function (b) {
+                var result = pow(a, b);
+
+                function pow(a, b) {
+                    if (b === 0) {
+                        return 1;
+                    }
+                    if (b != 1) {
+                        return a * pow(a, b - 1);
+                    } else {
+                        return a;
+                    }
+                };
+                console.log('Результат ' + a + '^' + b + ' = ' + result);
+            };
+        };
+        pow(-2)(3);
+        pow(4)(2);
+        pow(16)(0);
+        
+        function calculate(a) {
+            return function (sign) {
+                if (sign == '+') {
+                    return function (b) {
+                        console.log('Результат ' + a + '+' + b + ' = ' + (a + b));
+                    };
+                }
+                if (sign == '-') {
+                    return function (b) {
+                        console.log('Результат ' + a + '-' + b + ' = ' + (a - b));
+                    };
+                }
+                if (sign == '*') {
+                    return function (b) {
+                        console.log('Результат ' + a + '*' + b + ' = ' + (a * b));
+                    };
+                }
+                if (sign == '/') {
+                    return function (b) {
+                        console.log('Результат ' + a + '/' + b + ' = ' + (a / b));
+                    };
+                }
+            }
+        };
+        calculate(1)('+')(2);
+        calculate(3)('*')(7);
+        calculate(15)('/')(3);
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>

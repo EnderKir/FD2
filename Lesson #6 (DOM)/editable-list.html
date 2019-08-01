@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Тег SCRIPT</title>
+    <style>
+        li {
+            position: relative;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="list"></div>
+    <div id='textAndButtons'>
+
+        <input id="elem1" type="button" value="Добавить элемент" class="button" />
+        <input id="elem2" type="button" value="Удалить элемент" class="button" />
+
+    </div>
+    <script>
+        var list = document.getElementById('list');
+        var ol = document.createElement('ol');
+        const button1 = document.getElementById('elem1');
+        const button2 = document.getElementById('elem2');
+
+        function makeList(str) {
+            var words = str.split(', ');
+            for (var i = 0; i < words.length; i++) {
+                let li = document.createElement('li');
+                let a = document.createElement('a');
+                let input = document.createElement("input");
+                input.type = "text";
+                input.className = 'hidden';
+                input.style.position = 'absolute';
+                input.style.left = '0px';
+                a.href = "#";
+                a.innerHTML = words[i];
+                input.value = a.innerHTML;
+                li.appendChild(a);
+                li.appendChild(input);
+                ol.appendChild(li);
+                setEventForAllElements(a, input);
+
+            }
+            list.appendChild(ol);
+        };
+        makeList('Сахар, соль, вода, мука');
+        var globalInput = document.createElement('input');
+        globalInput.setAttribute('type', 'text');
+        var div = document.getElementById('textAndButtons');
+        div.appendChild(globalInput);
+
+        function addToList() {
+            if (globalInput.value != '') {
+                let li = document.createElement('li');
+                let a = document.createElement('a');
+                let input = document.createElement("input");
+                input.className = 'hidden';
+                input.style.position = 'absolute';
+                input.style.left = '0px';
+                input.type = "text";
+                a.href = "#";
+                a.innerHTML = globalInput.value;
+                input.value = a.innerHTML;
+                li.appendChild(a);
+                li.appendChild(input);
+                ol.appendChild(li);
+                globalInput.value = '';
+                setEventForAllElements(a, input);
+            }
+        };
+        button1.addEventListener("click", addToList);
+
+        function removeFromList() {
+            var lastLi = ol.lastElementChild;
+            if (lastLi) {
+                ol.removeChild(lastLi);
+            } else {
+                button2.disabled = true;
+            }
+
+        };
+        button2.addEventListener('click', removeFromList);
+
+        function setEventForAllElements(a, inpt) {
+            a.addEventListener('focus', function (e) {
+                e.preventDefault();
+                a.blur();
+                inpt.focus();
+                inpt.classList.remove('hidden');
+            }, true);
+            inpt.addEventListener('blur', function (e) {
+                e.preventDefault();
+                if (inpt.value != '') {
+                    a.innerHTML = inpt.value;
+                }
+                inpt.classList.add('hidden');
+            }, true);
+        };
+    </script>
+</body>
+
+</html>

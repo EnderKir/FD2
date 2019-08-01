@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Тег SCRIPT</title>
+  <script>
+      function quadraticEquation (a,b,c) {
+          var discriminant = b*b - 4*a*c;
+          if (discriminant < 0) {
+            if (b > 0) b = '+' + b;
+            if (c > 0) c = '+' + c;
+              if (a > 1)  {
+              console.log('уравнение ' + a + 'x^2 ' + b + 'x  ' + c + ' = 0 не имеет вещественных корней');
+              } else {
+                console.log('уравнение '  + 'x^2 ' + b + 'x  ' + c + ' = 0 не имеет вещественных корней');
+              }
+          } else if  (discriminant === 0) {
+            if (b > 0) b = '+' + b;
+            if (c > 0) c = '+' + c;
+              var radical = -b/2 * a;
+              if (a > 1) {
+              console.log('уравнение ' + a + 'x^2 ' + b + 'x '+ c + ' = 0 имеет один корень x = ' + radical);
+              } else {
+                console.log('уравнение ' + 'x^2 ' + b + 'x '+ c + ' = 0 имеет один корень x = ' + radical);
+              }
+          } else {
+            if (b > 0) b = '+' + b;
+            if (c > 0) c = '+' + c;
+              var firstRadical = (-b - Math.sqrt(discriminant)) / (2*a);
+              var secondRadical = (-b + Math.sqrt(discriminant)) / (2*a);
+              if (a > 0) {
+              console.log('уравнение ' + a + 'x^2 ' + b + 'x ' + c + ' = 0 имеет корни x1 = ' + firstRadical + ' и x2 = ' + secondRadical);
+              } else {
+                console.log('уравнение ' + 'x^2 ' + b + 'x ' + c + ' = 0 имеет корни x1 = ' + firstRadical + ' и x2 = ' + secondRadical);
+              }
+          }
+      }
+    quadraticEquation(1, -8, 72);
+    quadraticEquation(1, 12, 36);
+    quadraticEquation(4, -8, 1);
+  </script>
+ </head>
+ <body> 
+
+ </body>
+</html>

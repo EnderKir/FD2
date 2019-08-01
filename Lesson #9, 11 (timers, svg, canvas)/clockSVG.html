@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Clock SVG</title>
+    <style>
+        .text {
+            font: italic 30px sans-serif;
+            /* stroke: red; */
+        }
+
+        .secArrow {
+            transform-origin: 250px 250px;
+            position: absolute;
+            stroke-linecap: round;
+            stroke: red;
+            stroke-width: 5px;
+        }
+
+        .minArrow {
+            transform-origin: 250px 250px;
+            position: absolute;
+            stroke-linecap: round;
+            stroke: black;
+            stroke-width: 10px;
+        }
+
+        .hourArrow {
+            transform-origin: 250px 250px;
+            position: absolute;
+            stroke-linecap: round;
+            stroke: black;
+            stroke-width: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <svg id='svg' version="1.1" width="1280" height="1024" viewBox="0 0 1280 1024" baseProfile="full"
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:ev="http://www.w3.org/2001/xml-events">
+    </svg>
+</body>
+<script>
+    function createClock() {
+        var body = document.body;
+        var svg = document.getElementById('svg');
+        var clock = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        clock.setAttribute('cx', 250);
+        clock.setAttribute('cy', 250);
+        clock.setAttribute('r', 250);
+        clock.setAttribute('fill', '#C0C0C0');
+        svg.appendChild(clock);
+        document.body.appendChild(svg);
+
+        const numbers = 12;
+        let delta = Math.PI * 2 / numbers;
+        let angle = 0;
+        let numeral = 9;
+        let radius = -200;
+        let clockCenterX = 250;
+        let clockCenterY = 250;
+        for (var i = 1; i <= numbers; i++) {
+            let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            let x = clockCenterX + radius * Math.cos(angle);
+            let y = clockCenterY + radius * Math.sin(angle);
+            circle.setAttribute('cx', x);
+            circle.setAttribute('cy', y);
+            circle.setAttribute('r', 35);
+            circle.setAttribute('fill', '#00FFFF');
+            svg.appendChild(circle);
+            let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.textContent = numeral;
+            if (numeral > 9) {
+                x -= 17;
+                y += 10;
+            } else {
+                x -= 10;
+                y += 10;
+            }
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('class', 'text');
+            svg.appendChild(text);
+            angle += delta;
+            numeral++;
+            if (numeral > 12) {
+                numeral = 1;
+            }
+        }
+
+        let secArrow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        secArrow.setAttribute('x1', 250);
+        secArrow.setAttribute('y1', 250);
+        secArrow.setAttribute('x2', 250);
+        secArrow.setAttribute('y2', 50);
+        secArrow.setAttribute('class', 'secArrow');
+        svg.appendChild(secArrow);
+
+        let minArrow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        minArrow.setAttribute('x1', 250);
+        minArrow.setAttribute('y1', 250);
+        minArrow.setAttribute('x2', 250);
+        minArrow.setAttribute('y2', 70);
+        minArrow.setAttribute('class', 'minArrow');
+        svg.appendChild(minArrow);
+
+        let hourArrow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        hourArrow.setAttribute('x1', 250);
+        hourArrow.setAttribute('y1', 250);
+        hourArrow.setAttribute('x2', 250);
+        hourArrow.setAttribute('y2', 130);
+        hourArrow.setAttribute('class', 'hourArrow');
+        svg.appendChild(hourArrow);
+
+
+        function moveArrows() {
+
+            let min = new Date().getMinutes();
+            let sec = new Date().getSeconds();
+            let hour = new Date().getHours();
+            let secAngle = 6 * sec;
+            secArrow.setAttribute('transform', `rotate(${secAngle})`);
+            let minAngle = 6 * (min + 1 / 60 * sec);
+            minArrow.setAttribute('transform', `rotate(${minAngle})`);
+            let hourAngle = 30 * (hour + 1 / 60 * min);
+            hourArrow.setAttribute('transform', `rotate(${hourAngle})`);
+        }
+        moveArrows();
+        var movement = setTimeout(function run() {
+            moveArrows();
+            setTimeout(run, 1000);
+        }, 1000);
+
+        
+        var currentTime = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+        currentTime.setAttribute('x', 190);
+        currentTime.setAttribute('y', 180);
+        currentTime.setAttribute('stroke', 'red');
+        currentTime.setAttribute('class', 'text');
+        currentTime.setAttribute('id', 'currentTime');
+        svg.appendChild(currentTime);
+
+        function time() {
+            var date = new Date(),
+                hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(),
+                minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(),
+                seconds = (date.getSeconds() < 10) ? '0' + date.getSeconds() : date.getSeconds();
+            var currentTime = document.getElementById('currentTime')
+            currentTime.textContent = hours + ':' + minutes + ':' + seconds;
+        }
+        time();
+        var movementNumber = setTimeout(function run() {
+            time();
+            setTimeout(run, 1000);
+        }, 1000);
+    }
+    createClock();
+</script>
+
+</html>

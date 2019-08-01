@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Тег SCRIPT</title>
+    <style>
+        .highlight {
+            background: red;
+            color: #fff;
+        }
+        header {
+            border: 1px solid black;
+            padding: 20px;
+        }
+
+        span {
+            padding: 10px;
+            color: red;
+        }
+
+        input {
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            padding: .8em 1em calc(.8em + 3px);
+            border-radius: 3px;
+            background: rgb(64, 199, 129);
+            box-shadow: 0 -3px rgb(53, 167, 110) inset;
+            transition: 0.2s;
+            width: 200px;
+            margin-left: 50px;
+            margin-top: 20px;
+        }
+        .caption {
+            border: 2px solid red;
+            width: 400px;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+            text-align: center;
+            border-spacing: 5px;
+            background: #E1E3E0;
+            border-radius: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        td:hover {
+            border-color: red;
+            background-color: blue;
+        }
+
+        td,
+        th {
+            border: 2px solid #F56433;
+            padding: 10px;
+            text-align: center;
+            color: #8D8173;
+        }
+
+        th {
+            font-weight: bold;
+            background-color: #E6E6E6;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <span id="prevYear"><a href="#" title="предыдущий год">
+                << </a> </span> <span id="prevMonth"><a href="#" title="предыдущий месяц">
+                        < </a> </span> <label for='monthSelect'>Месяц</label>
+                            <select id='monthSelect'>
+                            </select>
+                            <label for='yearSelect'>Год</label>
+                            <select id='yearSelect'>
+                            </select>
+                            <span id="nextMonth"><a href="#" title="следующий месяц"> > </a></span>
+                            <span id="nextYear"><a href="#" title="следующий год"> >> </a></span>
+                            <br>
+                            <input id='createCalendar' type="button" value="Создать" class="button" />
+                            <input id='deleteCalendar' type="button" value="Удалить" class="button" />
+    </header>
+    <script>
+        const prevYear = document.getElementById('prevYear');
+        const prevMonth = document.getElementById('prevMonth');
+        const nextMonth = document.getElementById('nextMonth');
+        const nextYear = document.getElementById('nextYear');
+        const createNewCalendar = document.getElementById('createCalendar');
+        const deleteCalendar = document.getElementById('deleteCalendar');
+        const monthSelect = document.getElementById('monthSelect');
+        const yearSelect = document.getElementById('yearSelect');
+        const monthArray = ['Выбрать месяц', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август',
+            'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        ];
+        const yearArray = ['Выбрать год', '1980', '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988',
+            '1989', '1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000', '2001',
+            '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014',
+            '2015', '2016', '2017', '2018', '2019'
+        ];
+        for (var i = 0; i < monthArray.length; i++) {
+            var opt = monthArray[i];
+            var el = document.createElement('option');
+            el.textContent = opt;
+            el.value = opt;
+            monthSelect.appendChild(el);
+        }
+        for (var i = 0; i < yearArray.length; i++) {
+            var opt = yearArray[i];
+            var el = document.createElement('option');
+            el.textContent = opt;
+            el.value = opt;
+            yearSelect.appendChild(el);
+        }
+        var numbersOfMonth = {
+            'Январь': 0,
+            'Февраль': 1,
+            'Март': 2,
+            'Апрель': 3,
+            'Май': 4,
+            'Июнь': 5,
+            'Июль': 6,
+            'Август': 7,
+            'Сентябрь': 8,
+            'Октябрь': 9,
+            'Ноябрь': 10,
+            'Декабрь': 11
+        };
+        var month, year;
+
+        function makeCalendar() {
+            month = monthSelect.value;
+            year = yearSelect.value;
+            if (month === 'Выбрать месяц' || year === 'Выбрать год') {
+                createNewCalendar.disabled = true;
+                return;
+            }
+            calendarBuild(year, month);
+        }
+
+        function calendarBuild() {
+            var caption = document.createElement('div');
+            var parentElem = document.body
+            parentElem.appendChild(caption);
+            caption.classList.add('caption');
+            var nameOfCalendar = document.createElement('span');
+            caption.appendChild(nameOfCalendar);
+            var calendar = document.createElement('div');
+            calendar.classList.add('calendar');
+            caption.appendChild(calendar);
+            var string = ' ' + month + ' ' + year + ' года ';
+            var mon = numbersOfMonth[month];
+            nameOfCalendar.innerHTML = string;
+            var date = new Date(Number(year), mon);
+
+            var table =
+                '<table></th></tr><tr><th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th></tr><tr>';
+            for (var i = 0; i < getDay(date); i++) {
+                table += '<td></td>'
+            }
+            while (date.getMonth() == mon) {
+                table += '<td>' + date.getDate() + '</td>';
+                if (getDay(date) % 7 == 6) {
+                    table += '<tr></tr>';
+                }
+                date.setDate(date.getDate() + 1);
+            }
+
+            if (getDay(date) != 0) {
+                for (var i = getDay(date); i < 7; i++) {
+                    table += '<td></td>';
+                }
+            }
+
+            function getDay(date) {
+                var day = date.getDay();
+                if (day == 0) day = 7;
+                return day - 1;
+            }
+
+            table += '</tr></table>';
+            calendar.innerHTML = table;
+            selectTD(calendar);
+        }
+
+        function deleteFirstCalendar() {
+            let tables = document.getElementsByClassName('caption');
+            if (tables.length === 0) {
+                deleteCalendar.disabled = true;
+            } else {
+                var parentElem = document.body
+                parentElem.removeChild(tables[0]);
+            }
+        }
+        createNewCalendar.addEventListener('click', makeCalendar);
+        deleteCalendar.addEventListener('click', deleteFirstCalendar);
+
+        Object.prototype.getKeyByValue = function (value) {
+            for (var prop in this) {
+                if (this.hasOwnProperty(prop)) {
+                    if (this[prop] === value)
+                        return prop;
+                }
+            }
+        }
+
+        function setPreviousYear() {
+            var year = yearSelect.value;
+            if (year == 'Выбрать год') {
+                year = 2019;
+            } else {
+                year--;
+            }
+            if (year < 1970) {
+                year = 2019;
+            }
+            yearSelect.value = year;
+        }
+        prevYear.addEventListener('click', setPreviousYear);
+
+        function setNextYear() {
+            var year = yearSelect.value;
+            if (year == 2019) {
+                year = 'Выбрать год';
+                yearSelect.value = year;
+            }
+            if (year == 'Выбрать год') {
+                year = 1980;
+                yearSelect.value = year;
+            } else {
+                year++;
+                yearSelect.value = year;
+            }
+        }
+
+        nextYear.addEventListener('click', setNextYear);
+
+        function setPreviousMonth() {
+            var month = monthSelect.value;
+            var mon = numbersOfMonth[month];
+            if (month == 'Выбрать месяц') {
+                month = 'Декабрь';
+                setPreviousYear();
+                monthSelect.value = month;
+            } else {
+                mon--;
+                month = numbersOfMonth.getKeyByValue(mon);
+                if (mon < 0) {
+                    month = 'Выбрать месяц';
+                }
+                monthSelect.value = month;
+            }
+        }
+        prevMonth.addEventListener('click', setPreviousMonth);
+
+        function setNextMonth() {
+            var month = monthSelect.value;
+            var mon = numbersOfMonth[month];
+            if (month == 'Выбрать месяц') {
+                month = 'Январь';
+                setNextYear();
+                monthSelect.value = month;
+            } else {
+                mon++;
+                month = numbersOfMonth.getKeyByValue(mon);
+                if (mon > 10) {
+                    month = 'Выбрать месяц';
+                }
+                monthSelect.value = month;
+            }
+        }
+        nextMonth.addEventListener('click', setNextMonth);
+
+        function selectTD(elem) {
+            elem.addEventListener('click', function (event) {
+                let target = event.target;
+                let tdColection = elem.getElementsByTagName('TD');
+                if (target.tagName != 'TD') return;
+                else if (target.classList.contains('highlight')) {
+                    target.classList.remove('highlight');
+                } else {
+                    for (let i = 0; i < tdColection.length; i++) {
+                        tdColection[i].classList.remove('highlight');
+                    };
+                    target.classList.add('highlight');
+                }
+            });
+        };
+    </script>
+
+</body>
+
+</html>

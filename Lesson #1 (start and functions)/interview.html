@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Тег SCRIPT</title>
+  <script>
+    while (1) {
+        var name = prompt('Как вас зовут?','Введите сюда имя');
+        if (name != 'null' && name != '' && name.length < 15 && isNaN(name) && name.length > 1) {
+            break;
+        }
+        alert ('Введите реальное имя');
+    }
+    while (1) {
+        var surname = prompt('Как ваша фамилия?','Введите сюда фамилию');
+        if (surname != null && surname != '' && surname.length < 15 && isNaN(surname) && surname.length > 1) {
+            break;
+        }
+        alert ('Введите реальную фамилию');
+    }
+    while (1) {
+        var patronymic = prompt('Как ваше отчество?','Введите сюда отчество');
+        if (patronymic != null && patronymic != '' && patronymic.length < 15 && isNaN(patronymic) && patronymic.length > 1) {
+            break;
+        }
+        alert ('Введите реальное отчество');
+    }
+    while (1) {
+        var age = prompt('Сколько вам лет?','Введите сюда возраст');
+        if (age < 100 && age > 5 && !isNaN(age) && age != null) {
+            break;
+        }
+        alert ('Введите реальный возраст');
+    }
+    var ageInDays = age * 365;
+    var isMale = confirm("Ваш пол - мужской?");
+    if (isMale) {
+        var sex = 'Мужчина';
+    } else {
+        sex = 'Женщина'
+    }
+    if (age > 18) {
+        var isAdult = 'Вы уже совершеннолетний';
+    } else {
+        isAdult = 'Вы ещё не совершеннолетний';
+    }
+    if (age >= 60) {
+        var isRetired = 'Да';
+    } else {
+        isRetired = 'Нет';
+    }
+    alert('Ваше ФИО: ' + name + ' ' + surname + ' ' + patronymic + '\n' + 'Ваш возраст в годах: ' + age + '\n' +
+    'Ваш возраст в днях: ' + ageInDays + '\n' + isAdult + '\n' + 'Ваш пол: ' + sex + '\n' +
+    'Вы на пенсии: ' + isRetired);
+  </script>
+ </head>
+ <body> 
+ </body>
+</html>

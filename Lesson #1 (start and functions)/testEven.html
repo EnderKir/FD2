@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Тег SCRIPT</title>
+  <script>
+   while (1) {
+      var number = prompt('Введите ваше число?','Введите сюда число');
+      if (number != null && !isNaN(number) && number.length > 2) {
+         break;
+      }
+      alert ('Введите новое число (хотя бы 3 символа)');
+   }
+     var result = '';
+     for (var i = 0; i < number.length; i++) {
+         if (Number(number[i]) % 2 == 0 && Number(number[i+1]) % 2 == 0) {
+            if (i != number.length - 1) {
+            var str = number[i] + '-';
+            }
+           result += str;
+         } else {
+            result += number[i];
+         }
+      }   
+      alert('Ваше обработанное число   ' + result);
+  </script>
+ </head>
+ <body> 
+ </body>
+</html>

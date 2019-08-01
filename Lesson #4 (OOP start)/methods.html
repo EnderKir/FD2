@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Тег SCRIPT</title>
+</head>
+
+<body>
+    <script>
+        var numbers = [2, 3, 5, 7, 11, 13, 17, 19];
+
+        function currentSums(n) {
+            
+            var arr1 = [];
+            var arr2 = [];
+            for (var i = 1; i < n.length; i++) {
+                var way = n.slice(0, i).reduce(function (a, b) {
+                    return (`${a} + ${b}`);
+                    
+                });
+                arr1.push(' ' + way);
+            }
+            for (var i = 1; i < n.length; i++) {
+                var total = n.slice(0, i).reduce(function (a, b) {
+                    return a + b;
+                }, 0);
+                arr2.push(' ' + total);
+            }
+            console.log(`[${arr1} ] = [${arr2} ]`);
+        }
+        currentSums(numbers);
+
+        
+
+
+        var str = "Каждый охотник желает знать, где сидит фазан.";
+
+        function firstLetters(str) {
+            var letters = str.split(' ').map(function (word) {
+                return word[0];
+            })
+            console.log(letters);
+        }
+        firstLetters(str);
+
+
+        function changeArray(numbers) {
+            var length = numbers.length;
+            if (length % 2 == 0) m = length / 2;
+            else m = Math.floor(length / 2 + 1);
+            length--;
+            for (i = 0; i < length / 2; i++) {
+                var temp = numbers[i];
+                numbers[i] = numbers[m + i];
+                numbers[m + i] = temp;
+            }
+            console.log(numbers);
+        }
+
+        changeArray(numbers);
+        changeArray([1, 2, 3, 4, 5]);
+        changeArray([1, 2]);
+    </script>
+</body>
+
+</html>

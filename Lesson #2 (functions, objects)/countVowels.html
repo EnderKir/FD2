@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Тег SCRIPT</title>
+  <script>
+  function vowelCount(str) {
+  str = str.toLowerCase().split('').filter(letter => "аоиеёэыуюя".includes(letter)).length;
+  console.log('Количество гласных = ' + str);
+  }
+vowelCount('Пришла зима, запахло…');
+vowelCount('Ghbdtn, z r dfv bp Hjccbb');
+vowelCount('длинношеее');
+vowelCount('ООО');
+  </script>
+ </head>
+ <body> 
+ </body>
+</html>
